@@ -1,0 +1,161 @@
+{% extends "base/base.html" %}
+
+{% block title %}Overview — StudyVault{% endblock %}
+{% block page_title %}Your study space{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'library:document_list' %}" class="btn btn-primary btn-sm">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+    Upload documents
+  </a>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: var(--space-8);">
+
+  <!-- Subtitle -->
+  <div style="color: var(--color-text-secondary); font-size: var(--text-md); margin-top: -1rem;">
+    Pick up where you left off.
+  </div>
+
+  {% if total_docs == 0 %}
+    <!-- Empty State (Section 10) -->
+    <div class="surface" style="text-align: center; padding: var(--space-12) var(--space-6); border-radius: var(--radius-lg);">
+      <div class="brand-symbol" style="width: 44px; height: 44px; margin: 0 auto var(--space-4); font-size: var(--text-base);">SV</div>
+      <h2 style="font-size: var(--text-xl); font-weight: 600; margin-bottom: var(--space-2); color: var(--color-text);">
+        Your study space is empty.
+      </h2>
+      <p style="color: var(--color-text-secondary); font-size: var(--text-sm); max-width: 460px; margin: 0 auto var(--space-6); line-height: 1.5;">
+        Upload a PDF to start building a searchable collection of your study materials.
+      </p>
+      <a href="{% url 'library:document_list' %}" class="btn btn-primary">Upload your first PDF</a>
+    </div>
+
+  {% else %}
+
+    <!-- 1. Recent Study Activity / Questions (Section 10) -->
+    {% if recent_questions %}
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-3);">
+          <h2 style="font-size: var(--text-lg); font-weight: 600; color: var(--color-text);">Recent study questions</h2>
+          <a href="{% url 'assistant:ask' %}" style="font-size: var(--text-xs); color: var(--color-accent); text-decoration: none; font-weight: 500;">Ask new question &rarr;</a>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+          {% for q in recent_questions %}
+            <div class="surface" style="padding: var(--space-3) var(--space-4); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div style="font-weight: 500; font-size: var(--text-sm); color: var(--color-text);">
+                  {{ q.question }}
+                </div>
+                <div style="font-size: var(--text-xs); color: var(--color-text-muted); margin-top: 2px;">
+                  {{ q.created_at|date:"M d, Y &bull; H:i" }} &bull;
+                  {% if q.is_grounded %}
+                    <span style="color: var(--color-success); font-weight: 500;">Answered with citations</span>
+                  {% else %}
+                    <span style="color: var(--color-warning);">Abstained (insufficient notes)</span>
+                  {% endif %}
+                </div>
+              </div>
+              <a href="{% url 'assistant:ask' %}" class="btn btn-secondary btn-sm">Follow up</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- 2. Recently Uploaded Documents (Section 10) -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-3);">
+        <h2 style="font-size: var(--text-lg); font-weight: 600; color: var(--color-text);">Recent documents</h2>
+        <a href="{% url 'library:document_list' %}" style="font-size: var(--text-xs); color: var(--color-accent); text-decoration: none; font-weight: 500;">View all documents &rarr;</a>
+      </div>
+
+      <div class="surface" style="padding: 0; overflow: hidden;">
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Document</th>
+              <th>Collection</th>
+              <th>Status</th>
+              <th>Updated</th>
+              <th style="text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for doc in recent_docs %}
+              <tr>
+                <td>
+                  <div style="display: flex; align-items: center; gap: var(--space-3);">
+                    <span class="file-icon-pdf">PDF</span>
+                    <div>
+                      <a href="{% url 'library:document_preview' doc.id %}" style="font-weight: 500; color: var(--color-text); text-decoration: none;">
+                        {{ doc.title }}
+                      </a>
+                      <div style="font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono);">
+                        {{ doc.original_filename }} &bull; {{ doc.size_bytes|filesizeformat }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  {% if doc.collection %}
+                    <a href="{% url 'library:collection_detail' doc.collection.id %}" style="color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-xs);">
+                      {{ doc.collection.name }}
+                    </a>
+                  {% else %}
+                    <span style="color: var(--color-text-muted); font-size: var(--text-xs);">Unfiled</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="status-badge status-{{ doc.status|lower }}">{{ doc.status }}</span>
+                </td>
+                <td style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);">
+                  {{ doc.updated_at|date:"M d, Y" }}
+                </td>
+                <td style="text-align: right;">
+                  <a href="{% url 'assistant:ask' %}?doc={{ doc.id }}" class="btn btn-secondary btn-sm">Study</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. Collections List (Section 10) -->
+    <div>
+      <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--space-3);">
+        <h2 style="font-size: var(--text-lg); font-weight: 600; color: var(--color-text);">Collections</h2>
+        <a href="{% url 'library:collections' %}" style="font-size: var(--text-xs); color: var(--color-accent); text-decoration: none; font-weight: 500;">Manage collections &rarr;</a>
+      </div>
+
+      {% if collections %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4);">
+          {% for col in collections %}
+            <a href="{% url 'library:collection_detail' col.id %}" class="surface" style="text-decoration: none; display: flex; flex-direction: column; justify-content: space-between; transition: border-color 0.15s ease;">
+              <div>
+                <h3 style="font-size: var(--text-md); font-weight: 600; color: var(--color-text); margin-bottom: var(--space-1);">
+                  {{ col.name }}
+                </h3>
+                <p style="font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.4; margin-bottom: var(--space-3);">
+                  {{ col.description|default:"No description provided." }}
+                </p>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono); border-top: 1px solid var(--color-border); padding-top: var(--space-2);">
+                <span>{{ col.documents.count }} document{{ col.documents.count|pluralize }}</span>
+                <span>{{ col.updated_at|date:"M d" }}</span>
+              </div>
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="surface" style="padding: var(--space-4); text-align: center; color: var(--color-text-muted); font-size: var(--text-sm);">
+          No collections yet. Group documents by course or topic to study with tighter scope.
+        </div>
+      {% endif %}
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}

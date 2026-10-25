@@ -1,0 +1,119 @@
+{% extends "base/base.html" %}
+
+{% block title %}Collections — StudyVault{% endblock %}
+{% block page_title %}Study Collections{% endblock %}
+
+{% block topbar_actions %}
+  <button id="new-collection-btn" class="btn btn-primary btn-sm">+ New collection</button>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: var(--space-6);">
+
+  <div style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: -1rem;">
+    Group related lecture notes, textbooks, and reading materials to target retrieval.
+  </div>
+
+  <!-- Inline New Collection Form (Hidden by default) -->
+  <div id="new-collection-panel" class="surface" style="display: none; border-color: var(--color-accent);">
+    <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-3);">Create study collection</h3>
+    <form id="create-collection-form">
+      {% csrf_token %}
+      <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--space-4); margin-bottom: var(--space-4);">
+        <div>
+          <label style="display: block; font-size: var(--text-xs); font-weight: 500; margin-bottom: var(--space-1); color: var(--color-text-secondary);">Collection Name</label>
+          <input type="text" id="col-name" class="input" placeholder="e.g. Physics — Semester 1" required>
+        </div>
+        <div>
+          <label style="display: block; font-size: var(--text-xs); font-weight: 500; margin-bottom: var(--space-1); color: var(--color-text-secondary);">Description (optional)</label>
+          <input type="text" id="col-desc" class="input" placeholder="e.g. Mechanics, fluids, waves, and thermodynamics">
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-2);">
+        <button type="button" id="cancel-collection-btn" class="btn btn-secondary btn-sm">Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm">Create collection</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Collections Grid -->
+  <div id="collections-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--space-4);">
+    {% for col in collections %}
+      <div class="surface" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: var(--space-2);">
+            <h3 style="font-size: var(--text-md); font-weight: 600; color: var(--color-text);">
+              <a href="{% url 'library:collection_detail' col.id %}" style="color: inherit; text-decoration: none;">
+                {{ col.name }}
+              </a>
+            </h3>
+          </div>
+          <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-4);">
+            {{ col.description|default:"No description provided." }}
+          </p>
+        </div>
+
+        <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-3); display: flex; justify-content: space-between; align-items: center; font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono);">
+          <span>{{ col.documents.count }} document{{ col.documents.count|pluralize }}</span>
+          <a href="{% url 'library:collection_detail' col.id %}" class="btn btn-secondary btn-sm">Open &rarr;</a>
+        </div>
+      </div>
+    {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: var(--space-12); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+        <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-2);">No collections yet</h3>
+        <p style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-bottom: var(--space-4);">
+          Create a collection to organize your PDF materials by course or topic.
+        </p>
+        <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('new-collection-panel').style.display='block'">Create first collection</button>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const newBtn = document.getElementById("new-collection-btn");
+  const panel = document.getElementById("new-collection-panel");
+  const cancelBtn = document.getElementById("cancel-collection-btn");
+  const form = document.getElementById("create-collection-form");
+
+  newBtn.addEventListener("click", () => {
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth" });
+  });
+  cancelBtn.addEventListener("click", () => panel.style.display = "none");
+
+  function getCsrfToken() {
+    const cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+    return cookie ? cookie.split("=")[1] : "";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = document.getElementById("col-name").value.trim();
+    const desc = document.getElementById("col-desc").value.trim();
+    if (!name) return;
+
+    try {
+      const res = await fetch("/api/v1/collections/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCsrfToken(),
+        },
+        body: JSON.stringify({ name: name, description: desc }),
+      });
+
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        alert("Failed to create collection.");
+      }
+    } catch (err) {
+      alert("Network error creating collection.");
+    }
+  });
+</script>
+{% endblock %}

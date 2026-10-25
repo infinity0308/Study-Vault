@@ -1,0 +1,116 @@
+{% extends "base/base.html" %}
+
+{% block title %}{{ collection.name }} — StudyVault{% endblock %}
+{% block page_title %}{{ collection.name }}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'library:collections' %}" class="btn btn-secondary btn-sm">&larr; All Collections</a>
+  <a href="{% url 'assistant:ask' %}?collection={{ collection.id }}" class="btn btn-primary btn-sm">Ask collection</a>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: var(--space-6);">
+
+  <!-- Collection Meta Surface -->
+  <div class="surface" style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4);">
+    <div>
+      <h2 style="font-size: var(--text-lg); font-weight: 600; color: var(--color-text); margin-bottom: var(--space-2);">
+        {{ collection.name }}
+      </h2>
+      <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5;">
+        {{ collection.description|default:"No description provided for this collection." }}
+      </p>
+      <div style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); margin-top: var(--space-3);">
+        {{ documents|length }} document{{ documents|length|pluralize }} &bull; Updated {{ collection.updated_at|date:"M d, Y" }}
+      </div>
+    </div>
+    <button id="delete-collection-btn" class="btn btn-secondary btn-sm" style="color: var(--color-danger); border-color: transparent;">
+      Delete collection
+    </button>
+  </div>
+
+  <!-- Documents in Collection -->
+  <div>
+    <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-3);">Documents in this collection</h3>
+
+    <div class="surface" style="padding: 0; overflow: hidden;">
+      <table class="doc-table">
+        <thead>
+          <tr>
+            <th>Document</th>
+            <th>Pages</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in documents %}
+            <tr>
+              <td>
+                <div style="display: flex; align-items: center; gap: var(--space-3);">
+                  <span class="file-icon-pdf">PDF</span>
+                  <div>
+                    <a href="{% url 'library:document_preview' doc.id %}" style="font-weight: 500; color: var(--color-text); text-decoration: none;">
+                      {{ doc.title }}
+                    </a>
+                    <div style="font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono);">
+                      {{ doc.original_filename }} &bull; {{ doc.size_bytes|filesizeformat }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td style="font-family: var(--font-mono); font-size: var(--text-xs);">
+                {{ doc.page_count|default:"-" }}
+              </td>
+              <td>
+                <span class="status-badge status-{{ doc.status|lower }}">{{ doc.status }}</span>
+              </td>
+              <td style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);">
+                {{ doc.updated_at|date:"M d, Y" }}
+              </td>
+              <td style="text-align: right;">
+                <a href="{% url 'assistant:ask' %}?doc={{ doc.id }}" class="btn btn-secondary btn-sm">Study</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+                No documents in this collection yet. Move existing documents here from the <a href="{% url 'library:document_list' %}" style="color: var(--color-accent);">Documents Library</a>.
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const deleteBtn = document.getElementById("delete-collection-btn");
+  function getCsrfToken() {
+    const cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
+    return cookie ? cookie.split("=")[1] : "";
+  }
+
+  deleteBtn.addEventListener("click", async () => {
+    if (!confirm("Delete this collection? Contained documents will not be deleted, but will become unfiled.")) return;
+    try {
+      const res = await fetch("/api/v1/collections/{{ collection.id }}/", {
+        method: "DELETE",
+        headers: { "X-CSRFToken": getCsrfToken() }
+      });
+      if (res.ok) {
+        window.location.href = "{% url 'library:collections' %}";
+      } else {
+        alert("Failed to delete collection.");
+      }
+    } catch (e) {
+      alert("Network error deleting collection.");
+    }
+  });
+</script>
+{% endblock %}

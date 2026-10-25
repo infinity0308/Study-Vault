@@ -1,0 +1,70 @@
+{% extends "base/base.html" %}
+
+{% block title %}{{ document.title }} — StudyVault{% endblock %}
+{% block page_title %}{{ document.title }}{% endblock %}
+
+{% block topbar_actions %}
+  <a href="{% url 'library:document_list' %}" class="btn btn-secondary btn-sm">&larr; Back to Library</a>
+  <a href="{% url 'assistant:ask' %}?doc={{ document.id }}" class="btn btn-primary btn-sm">Ask about document</a>
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; flex-direction: column; gap: var(--space-6);">
+
+  <!-- Document Header Surface -->
+  <div class="surface" style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4);">
+    <div>
+      <div style="display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-2);">
+        <span class="file-icon-pdf">PDF</span>
+        <h2 style="font-size: var(--text-lg); font-weight: 600; color: var(--color-text);">
+          {{ document.title }}
+        </h2>
+        <span class="status-badge status-{{ document.status|lower }}">{{ document.status }}</span>
+      </div>
+
+      <div style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted); display: flex; gap: var(--space-4);">
+        <span>Filename: {{ document.original_filename }}</span>
+        <span>Size: {{ document.size_bytes|filesizeformat }}</span>
+        <span>Pages: {{ document.page_count|default:"-" }}</span>
+        <span>Chunks: {{ document.chunk_count|default:"-" }}</span>
+        {% if document.collection %}
+          <span>Collection: <a href="{% url 'library:collection_detail' document.collection.id %}" style="color: var(--color-accent);">{{ document.collection.name }}</a></span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Content Preview (Section 15) -->
+  <div>
+    <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-3);">
+      Extracted Text Preview
+    </h3>
+
+    {% if preview_pages %}
+      <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+        {% for page_num, text in preview_pages %}
+          <div class="surface" style="padding: var(--space-4) var(--space-6);">
+            <div style="font-family: var(--font-mono); font-size: var(--text-xs); font-weight: 600; color: var(--color-accent); margin-bottom: var(--space-2); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-1);">
+              Page {{ page_num }}
+            </div>
+            <div style="font-size: var(--text-sm); line-height: 1.7; color: var(--color-text); white-space: pre-wrap;">
+              {{ text }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="surface" style="text-align: center; padding: var(--space-8); color: var(--color-text-muted);">
+        {% if document.status == "PROCESSING" or document.status == "QUEUED" %}
+          Document is currently undergoing text extraction and embedding in the background. Check back shortly.
+        {% elif document.status == "FAILED" %}
+          Extraction failed: {{ document.failure_message|default:"Unable to extract text from this PDF." }}
+        {% else %}
+          Text preview is currently unavailable for this document.
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}
