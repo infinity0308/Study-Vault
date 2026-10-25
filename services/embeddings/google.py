@@ -20,9 +20,13 @@ class GoogleGenAIEmbeddingProvider(EmbeddingProvider):
         model_name: str | None = None,
         dimension: int = 768,
     ):
-        self.api_key = api_key or getattr(settings, "GEMMA_API_KEY", "")
-        self.model_name = model_name or getattr(settings, "EMBEDDING_MODEL", "gemini-embedding-001")
-        self.dimension = dimension or getattr(settings, "EMBEDDING_DIMENSION", 768)
+        self.api_key = api_key or (getattr(settings, "GEMMA_API_KEY", "") if settings.configured else "")
+        raw_model = model_name or (getattr(settings, "EMBEDDING_MODEL", "gemini-embedding-001") if settings.configured else "gemini-embedding-001")
+        if raw_model in ("text-embedding-004", "models/text-embedding-004", ""):
+            self.model_name = "gemini-embedding-001"
+        else:
+            self.model_name = raw_model
+        self.dimension = dimension or (getattr(settings, "EMBEDDING_DIMENSION", 768) if settings.configured else 768)
 
         if not self.api_key:
             raise ValueError("Google API key is missing. Set GEMMA_API_KEY or GOOGLE_API_KEY.")

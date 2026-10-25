@@ -19,8 +19,12 @@ class GoogleGemmaAnswerProvider(AnswerProvider):
         api_key: str | None = None,
         model_name: str | None = None,
     ):
-        self.api_key = api_key or getattr(settings, "GEMMA_API_KEY", "")
-        self.model_name = model_name or getattr(settings, "GEMMA_MODEL", "gemma-2-9b-it")
+        self.api_key = api_key or (getattr(settings, "GEMMA_API_KEY", "") if settings.configured else "")
+        raw_model = model_name or (getattr(settings, "GEMMA_MODEL", "gemini-2.5-flash") if settings.configured else "gemini-2.5-flash")
+        if raw_model in ("gemma-2-9b-it", "models/gemma-2-9b-it", ""):
+            self.model_name = "gemini-2.5-flash"
+        else:
+            self.model_name = raw_model
 
         if not self.api_key:
             raise ValueError("Google API key is missing. Set GEMMA_API_KEY or GOOGLE_API_KEY.")
