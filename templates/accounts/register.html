@@ -1,0 +1,52 @@
+{% extends "base/base.html" %}
+
+{% block title %}Create Account — StudyVault{% endblock %}
+{% block page_title %}Create Your Account{% endblock %}
+
+{% block content %}
+<div style="max-width: 380px; margin: var(--space-12) auto; padding: 0 var(--space-4);">
+  <div class="surface" style="border-radius: var(--radius-lg); box-shadow: var(--shadow-elevated);">
+    <div style="display: flex; align-items: center; gap: var(--space-2); margin-bottom: var(--space-4);">
+      <div class="brand-symbol">SV</div>
+      <span style="font-weight: 600; font-size: var(--text-md); color: var(--color-text);">StudyVault</span>
+    </div>
+
+    <h2 style="font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-1); color: var(--color-text);">
+      Create study space
+    </h2>
+    <p style="color: var(--color-text-secondary); font-size: var(--text-xs); margin-bottom: var(--space-5);">
+      Build a private, searchable collection of your notes and PDFs.
+    </p>
+
+    {% if error %}
+      <div style="padding: var(--space-2) var(--space-3); border-radius: var(--radius-sm); background-color: var(--color-danger-bg); color: var(--color-danger); margin-bottom: var(--space-4); font-size: var(--text-xs); border: 1px solid var(--color-danger);">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'accounts:register' %}">
+      {% csrf_token %}
+      <div style="margin-bottom: var(--space-3);">
+        <label for="username" style="display: block; font-size: var(--text-xs); font-weight: 500; margin-bottom: var(--space-1); color: var(--color-text-secondary);">Username</label>
+        <input type="text" id="username" name="username" required class="input" placeholder="e.g. learner">
+      </div>
+
+      <div style="margin-bottom: var(--space-3);">
+        <label for="email" style="display: block; font-size: var(--text-xs); font-weight: 500; margin-bottom: var(--space-1); color: var(--color-text-secondary);">Email</label>
+        <input type="email" id="email" name="email" required class="input" placeholder="learner@example.com">
+      </div>
+
+      <div style="margin-bottom: var(--space-5);">
+        <label for="password" style="display: block; font-size: var(--text-xs); font-weight: 500; margin-bottom: var(--space-1); color: var(--color-text-secondary);">Password (8+ characters)</label>
+        <input type="password" id="password" name="password" minlength="8" required class="input" placeholder="••••••••">
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%;">Create account</button>
+    </form>
+
+    <div style="margin-top: var(--space-5); border-top: 1px solid var(--color-border); padding-top: var(--space-3); text-align: center; font-size: var(--text-xs); color: var(--color-text-secondary);">
+      Already have an account? <a href="{% url 'accounts:login' %}" style="color: var(--color-accent); font-weight: 500; text-decoration: none;">Sign in</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

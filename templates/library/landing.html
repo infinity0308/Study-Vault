@@ -1,0 +1,186 @@
+{% extends "base/base.html" %}
+
+{% block title %}StudyVault — Study from your own sources{% endblock %}
+
+{% block content %}
+<div style="background-color: var(--color-canvas); min-height: 100vh;">
+  <!-- Public Landing Header (Section 8) -->
+  <header style="height: var(--header-height); border-bottom: 1px solid var(--color-border); background-color: var(--color-surface); padding: 0 var(--space-8); display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: var(--space-3);">
+      <div class="brand-symbol">SV</div>
+      <span style="font-weight: 600; font-size: var(--text-md); color: var(--color-text);">StudyVault</span>
+    </div>
+    <nav style="display: flex; align-items: center; gap: var(--space-6);">
+      <a href="#how-it-works" style="color: var(--color-text-secondary); text-decoration: none; font-size: var(--text-sm);">How it works</a>
+      <a href="{% url 'accounts:login' %}" style="color: var(--color-text); text-decoration: none; font-size: var(--text-sm); font-weight: 500;">Sign in</a>
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-sm">Create account</a>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section style="max-width: 1000px; margin: 0 auto; padding: var(--space-16) var(--space-6) var(--space-10); text-align: center;">
+    <div style="font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.1em; color: var(--color-accent); font-weight: 600; margin-bottom: var(--space-3);">
+      YOUR MATERIALS. YOUR KNOWLEDGE.
+    </div>
+    <h1 style="font-size: var(--text-display); font-weight: 600; letter-spacing: -0.02em; color: var(--color-text); line-height: 1.2; margin-bottom: var(--space-4);">
+      Study from your own sources.
+    </h1>
+    <p style="font-size: var(--text-lg); color: var(--color-text-secondary); max-width: 680px; margin: 0 auto var(--space-8); line-height: 1.6;">
+      Upload your notes and PDFs. Ask questions, explore explanations, and find the exact passages that support every answer.
+    </p>
+    <div style="display: flex; gap: var(--space-3); justify-content: center; align-items: center;">
+      <a href="{% url 'accounts:register' %}" class="btn btn-primary" style="padding: 10px var(--space-6); font-size: var(--text-md);">Start your study space</a>
+      <a href="#how-it-works" class="btn btn-secondary" style="padding: 10px var(--space-6); font-size: var(--text-md);">See how it works</a>
+    </div>
+  </section>
+
+  <!-- Product Demonstration (Section 8) -->
+  <section style="max-width: 1060px; margin: 0 auto var(--space-16); padding: 0 var(--space-6);">
+    <div class="surface" style="border-radius: var(--radius-lg); padding: 0; overflow: hidden; box-shadow: var(--shadow-elevated);">
+      <!-- Mock Top Desk Bar -->
+      <div style="background-color: var(--color-surface-subtle); padding: var(--space-3) var(--space-6); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-sm); font-weight: 500; color: var(--color-text);">
+          <span style="color: var(--color-accent);">&bull;</span> Collection: <strong>Physics — Semester 1</strong>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);">
+          3 indexed PDFs &bull; Ready for Q&A
+        </div>
+      </div>
+
+      <!-- Demonstration 3-Region Workspace Preview -->
+      <div style="display: flex; min-height: 380px;">
+        <!-- Left: Sample Documents Rail -->
+        <div style="width: 260px; border-right: 1px solid var(--color-border); background-color: var(--color-canvas); padding: var(--space-4);">
+          <div style="font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-bottom: var(--space-3);">
+            Uploaded Materials
+          </div>
+          <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+            <div style="padding: var(--space-2) var(--space-3); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: var(--text-xs); display: flex; align-items: center; gap: var(--space-2);">
+              <span class="file-icon-pdf">PDF</span>
+              <div>
+                <div style="font-weight: 500;">Classical_Mechanics.pdf</div>
+                <div style="color: var(--color-text-muted); font-size: 11px;">Ch. 4 Collisions &bull; 24 pages</div>
+              </div>
+            </div>
+            <div style="padding: var(--space-2) var(--space-3); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: var(--text-xs); display: flex; align-items: center; gap: var(--space-2);">
+              <span class="file-icon-pdf">PDF</span>
+              <div>
+                <div style="font-weight: 500;">Lecture_Notes_Week_3.pdf</div>
+                <div style="color: var(--color-text-muted); font-size: 11px;">Momentum &bull; 12 pages</div>
+              </div>
+            </div>
+            <div style="padding: var(--space-2) var(--space-3); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: var(--text-xs); display: flex; align-items: center; gap: var(--space-2);">
+              <span class="file-icon-pdf">PDF</span>
+              <div>
+                <div style="font-weight: 500;">Thermodynamics_Overview.pdf</div>
+                <div style="color: var(--color-text-muted); font-size: 11px;">Introductory &bull; 18 pages</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Sample Conversation Area -->
+        <div style="flex: 1; padding: var(--space-6); background-color: var(--color-surface); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="margin-bottom: var(--space-4);">
+              <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-muted);">Question:</span>
+              <div style="font-weight: 500; font-size: var(--text-base); margin-top: 2px;">
+                What is the difference between elastic and inelastic collisions?
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+              <span style="font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-accent); font-weight: 600;">Grounded Explanation:</span>
+              <p style="font-size: var(--text-sm); line-height: 1.6; color: var(--color-text); margin-top: var(--space-2);">
+                According to your lecture notes, total linear momentum is conserved in both types of collisions. However, in an <strong>elastic collision</strong>, kinetic energy is strictly conserved. In an <strong>inelastic collision</strong>, part of the initial kinetic energy is converted into thermal energy, deformation, or sound.
+              </p>
+            </div>
+          </div>
+
+          <div style="background-color: var(--color-canvas); padding: var(--space-3); border-radius: var(--radius-sm); font-size: var(--text-xs); color: var(--color-text-secondary); display: flex; justify-content: space-between;">
+            <span>Grounded response generated using Qdrant vector retrieval</span>
+            <span style="color: var(--color-success); font-weight: 500;">Verified with notes</span>
+          </div>
+        </div>
+
+        <!-- Right: Sample Source Panel -->
+        <div style="width: 280px; border-left: 1px solid var(--color-border); background-color: var(--color-surface-subtle); padding: var(--space-4);">
+          <div style="font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); margin-bottom: var(--space-3);">
+            Retrieved Passages
+          </div>
+          <div class="source-item" style="margin-top: 0;">
+            <div class="source-item-header">
+              <span>Classical_Mechanics.pdf</span>
+              <span style="color: var(--color-text-muted);">Page 14</span>
+            </div>
+            <div style="color: var(--color-text-secondary);">
+              "In a closed system, momentum is conserved in all collisions. Kinetic energy is conserved solely in perfectly elastic encounters."
+            </div>
+          </div>
+          <div class="source-item">
+            <div class="source-item-header">
+              <span>Lecture_Notes_Week_3.pdf</span>
+              <span style="color: var(--color-text-muted);">Page 6</span>
+            </div>
+            <div style="color: var(--color-text-secondary);">
+              "Inelastic collisions result in loss of mechanical energy to internal heat and structural deformation."
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works (Section 8) -->
+  <section id="how-it-works" style="max-width: 960px; margin: 0 auto var(--space-16); padding: 0 var(--space-6);">
+    <h2 style="font-size: var(--text-2xl); font-weight: 600; text-align: center; margin-bottom: var(--space-8); letter-spacing: -0.01em;">
+      Three steps to effortless study
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6);">
+      <div class="surface">
+        <div style="font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 600; color: var(--color-accent); margin-bottom: var(--space-2);">01</div>
+        <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-2);">Upload your materials</h3>
+        <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5;">
+          Drop your lecture slides, syllabus, or textbook PDFs into StudyVault. Text is extracted and indexed locally in Qdrant.
+        </p>
+      </div>
+
+      <div class="surface">
+        <div style="font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 600; color: var(--color-accent); margin-bottom: var(--space-2);">02</div>
+        <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-2);">Ask questions</h3>
+        <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5;">
+          Ask natural study questions. Target your entire library or scope retrieval to a specific collection or document.
+        </p>
+      </div>
+
+      <div class="surface">
+        <div style="font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 600; color: var(--color-accent); margin-bottom: var(--space-2);">03</div>
+        <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-2);">Inspect citations</h3>
+        <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5;">
+          Read concise answers backed by explicit source citations, page numbers, and exact excerpts from your files.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust and Limitations (Section 8) -->
+  <section style="max-width: 800px; margin: 0 auto var(--space-16); padding: var(--space-6); background-color: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+    <h3 style="font-size: var(--text-md); font-weight: 600; margin-bottom: var(--space-2); color: var(--color-text);">
+      Honest Grounding & Privacy
+    </h3>
+    <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.6;">
+      Answers are generated strictly from retrieved passages in your study notes. If your documents do not contain the answer, StudyVault clearly abstains instead of inventing facts. Your PDFs remain private and isolated to your account.
+    </p>
+  </section>
+
+  <!-- Restrained Footer (Section 8) -->
+  <footer style="border-top: 1px solid var(--color-border); background-color: var(--color-surface); padding: var(--space-8) var(--space-6); text-align: center; font-size: var(--text-sm); color: var(--color-text-muted);">
+    <div style="display: flex; justify-content: center; gap: var(--space-6); margin-bottom: var(--space-3);">
+      <a href="{% url 'accounts:login' %}" style="color: var(--color-text-secondary); text-decoration: none;">Sign In</a>
+      <a href="{% url 'accounts:register' %}" style="color: var(--color-text-secondary); text-decoration: none;">Create Account</a>
+      <a href="{% url 'accounts:settings' %}" style="color: var(--color-text-secondary); text-decoration: none;">Privacy & Data</a>
+    </div>
+    <div>&copy; 2026 StudyVault. Academic study workspace grounded in your materials.</div>
+  </footer>
+</div>
+{% endblock %}
