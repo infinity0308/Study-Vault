@@ -109,3 +109,71 @@ def test_ask_api_grounded_answer_and_abstention(monkeypatch):
     assert data_unans["grounded"] is False
     assert "not contain sufficient information" in data_unans["answer"]
     assert len(data_unans["sources"]) == 0
+
+
+@pytest.mark.django_db
+def test_ask_api_multi_turn_conversation():
+    user = User.objects.create_user(username="multiturn", email="multi@example.com", password="password123")
+    client = APIClient()
+    client.force_authenticate(user=user)
+
+    doc = Document.objects.create(
+        owner=user,
+        title="Genetics Notes",
+        original_filename="genetics.pdf",
+        object_key=f"users/{user.id}/genetics.pdf",
+        status=Document.Status.READY,
+        page_count=10,
+        chunk_count=3,
+    )
+
+    vs = get_vector_store_service()
+    vs.ensure_collection()
+    emb = get_embedding_provider()
+    text = "DNA is composed of two strands forming a double helix carrying genetic instructions."
+    vec = emb.embed_texts([text])[0]
+    chunk_id = str(uuid.uuid4())
+
+    vs.upsert_points([
+        {
+            "id": chunk_id,
+            "vector": vec,
+            "payload": {
+                "owner_id": str(user.id),
+                "document_id": str(doc.id),
+                "chunk_id": chunk_id,
+                "page": 1,
+                "text": text,
+                "embedding_model": "test",
+            },
+        }
+    ])
+
+    # Turn 1: No conversation_id -> creates new conversation
+    res1 = client.post(
+        "/api/v1/ask/",
+        {"question": "What is DNA composed of?", "document_ids": [str(doc.id)]},
+        format="json",
+    )
+    assert res1.status_code == 200
+    d1 = res1.json()
+    assert d1["conversation_id"] is not None
+    assert d1["conversation_title"] != ""
+    conv_id = d1["conversation_id"]
+
+    # Turn 2: Follow-up using same conversation_id
+    res2 = client.post(
+        "/api/v1/ask/",
+        {
+            "question": "Does it form a double helix?",
+            "conversation_id": conv_id,
+            "document_ids": [str(doc.id)],
+        },
+        format="json",
+    )
+    assert res2.status_code == 200
+    d2 = res2.json()
+    assert d2["conversation_id"] == conv_id
+
+    # Verify conversation now has 2 questions
+    assert Question.objects.filter(conversation_id=conv_id).count() == 2

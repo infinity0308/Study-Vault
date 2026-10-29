@@ -4,6 +4,10 @@
 {% block page_title %}All Documents{% endblock %}
 
 {% block topbar_actions %}
+  <a href="{% url 'home' %}" class="btn btn-secondary btn-sm" title="Back to conversation">
+    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <span>Back to Chat</span>
+  </a>
   <button id="open-upload-btn" class="btn btn-primary btn-sm">
     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
     Upload PDF
@@ -11,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; flex-direction: column; gap: var(--space-6);">
+<div style="display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-6) var(--space-8); max-width: 1200px; margin: 0 auto; width: 100%; overflow-y: auto;">
 
   <!-- Upload Modal / Drawer (Section 13) -->
   <div id="upload-panel" class="surface" style="display: none; border-color: var(--color-accent);">
@@ -170,11 +174,6 @@
     if (fileInput.files.length) selectedFileName.textContent = fileInput.files[0].name;
   });
 
-  function getCsrfToken() {
-    const cookie = document.cookie.split("; ").find(r => r.startsWith("csrftoken="));
-    return cookie ? cookie.split("=")[1] : "";
-  }
-
   // Upload
   uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -269,17 +268,17 @@
               <span class="file-icon-pdf">PDF</span>
               <div>
                 <a href="/library/documents/${doc.id}/preview/" style="font-weight: 500; color: var(--color-text); text-decoration: none;">
-                  ${doc.title}
+                  ${escapeHtml(doc.title)}
                 </a>
                 <div style="font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono);">
-                  ${doc.original_filename} &bull; ${formatBytes(doc.size_bytes)}
+                  ${escapeHtml(doc.original_filename)} &bull; ${formatBytes(doc.size_bytes)}
                 </div>
               </div>
             </div>
-            ${isFailed ? `<div style="margin-top: 4px; font-size: 11px; color: var(--color-danger);">${doc.failure_message || "Ingestion failed"}</div>` : ""}
+            ${isFailed ? `<div style="margin-top: 4px; font-size: 11px; color: var(--color-danger);">${escapeHtml(doc.failure_message || "Ingestion failed")}</div>` : ""}
           </td>
           <td style="font-size: var(--text-xs); color: var(--color-text-secondary);">
-            ${doc.collection_name || '<span style="color:var(--color-text-muted)">Unfiled</span>'}
+            ${doc.collection_name ? escapeHtml(doc.collection_name) : '<span style="color:var(--color-text-muted)">Unfiled</span>'}
           </td>
           <td style="font-family: var(--font-mono); font-size: var(--text-xs);">
             ${doc.page_count !== null ? doc.page_count : '-'}
@@ -292,9 +291,9 @@
           </td>
           <td style="text-align: right; white-space: nowrap;">
             ${isFailed ? `<button class="btn btn-secondary btn-sm" onclick="retryDoc('${doc.id}')">Retry</button>` : ""}
-            ${isReady ? `<a href="/ask/?doc=${doc.id}" class="btn btn-secondary btn-sm">Study</a>` : ""}
+            ${isReady ? `<a href="/?doc=${doc.id}" class="btn btn-primary btn-sm" title="Start study session with this document">Study</a>` : ""}
             <a href="/library/documents/${doc.id}/preview/" class="btn btn-secondary btn-sm">Preview</a>
-            <button class="btn btn-secondary btn-sm" style="color: var(--color-danger); border-color: transparent;" onclick="promptDelete('${doc.id}', '${doc.title.replace(/'/g, "\\'")}')">
+            <button class="btn btn-secondary btn-sm" style="color: var(--color-danger); border-color: transparent;" onclick="promptDelete('${doc.id}', '${escapeHtml(doc.title)}')">
               Delete
             </button>
           </td>

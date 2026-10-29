@@ -6,7 +6,7 @@ wait_for_service() {
     port="$2"
     name="$3"
     echo "Waiting for $name ($host:$port)..."
-    while ! nc -z "$host" "$port"; do
+    while ! python3 -c "import socket; s = socket.socket(); s.settimeout(2); s.connect(('$host', int('$port'))); s.close()" 2>/dev/null; do
         sleep 1
     done
     echo "$name is ready!"

@@ -250,31 +250,21 @@ class DocumentRetryAPIView(APIView):
 def home_view(request):
     """
     Renders Public Landing Page for unauthenticated users,
-    or redirects/renders Overview for authenticated users.
+    or renders the Chat-First interface for authenticated users.
     """
     if not request.user.is_authenticated:
         return render(request, "library/landing.html")
-    return overview_view(request)
+    from apps.assistant.views import chat_view
+    return chat_view(request)
 
 
 @login_required
 def overview_view(request):
-    user_docs = Document.objects.filter(owner=request.user).exclude(status=Document.Status.DELETING)
-    total_docs = user_docs.count()
-    recent_docs = user_docs.order_by("-updated_at")[:6]
-    collections = Collection.objects.filter(owner=request.user).order_by("-updated_at")[:4]
-    recent_questions = Question.objects.filter(owner=request.user).order_by("-created_at")[:4]
-
-    return render(
-        request,
-        "library/overview.html",
-        {
-            "total_docs": total_docs,
-            "recent_docs": recent_docs,
-            "collections": collections,
-            "recent_questions": recent_questions,
-        },
-    )
+    """
+    Renders the Chat-First interface for authenticated users.
+    """
+    from apps.assistant.views import chat_view
+    return chat_view(request)
 
 
 @login_required

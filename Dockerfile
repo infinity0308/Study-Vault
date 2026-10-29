@@ -1,16 +1,10 @@
-FROM python:3.13-slim
+FROM python:3.12-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    netcat-openbsd \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
 COPY requirements.txt .

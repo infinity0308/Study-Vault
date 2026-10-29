@@ -8,77 +8,218 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   {% block extra_head %}{% endblock %}
 </head>
-<body>
-  <div class="app-container">
+<body class="{% if user.is_authenticated %}app-authenticated{% else %}app-public{% endif %}">
+
+  <div class="app-layout" id="app-layout">
     {% if user.is_authenticated %}
-    <!-- Restrained Dark Ink Sidebar (Section 7) -->
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-symbol">SV</div>
-        <a href="{% url 'overview' %}" class="brand-text">StudyVault</a>
+    <!-- Mobile Backdrop Overlay -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
+    <!-- Collapsible Modern Sidebar -->
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Main Application Sidebar">
+      <!-- Sidebar Header -->
+      <div class="sidebar-header">
+        <a href="{% url 'home' %}" class="sidebar-brand" title="StudyVault Home">
+          <div class="brand-symbol">SV</div>
+          <span class="brand-name">StudyVault</span>
+        </a>
+        <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Toggle sidebar">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"/>
+          </svg>
+        </button>
       </div>
 
-      <nav class="sidebar-nav" aria-label="Main Navigation">
-        <div class="sidebar-section-title">Workspace</div>
-        <a href="{% url 'overview' %}" class="nav-link {% if request.resolver_match.url_name == 'overview' %}active{% endif %}">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          Overview
+      <!-- Primary Actions -->
+      <div class="sidebar-actions">
+        <a href="{% url 'home' %}" class="sidebar-action-btn primary-new-chat" id="sidebar-new-chat-btn" title="New chat (Ctrl+Shift+O)">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          <span class="action-label">New chat</span>
         </a>
-        <a href="{% url 'library:collections' %}" class="nav-link {% if 'collections' in request.path %}active{% endif %}">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-          Collections
+
+        <button type="button" class="sidebar-action-btn" id="sidebar-search-btn" title="Search chats (Ctrl+K)">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <span class="action-label">Search chats</span>
+          <kbd class="shortcut-pill">⌘K</kbd>
+        </button>
+      </div>
+
+      <!-- Main Navigation Links -->
+      <nav class="sidebar-nav" aria-label="Study Workspace Links">
+        <div class="nav-section-title">Library</div>
+        <a href="{% url 'library:document_list' %}" class="nav-item {% if request.resolver_match.url_name == 'document_list' %}active{% endif %}" title="All Documents">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          <span class="nav-label">Documents</span>
         </a>
-        <a href="{% url 'library:document_list' %}" class="nav-link {% if request.resolver_match.url_name == 'document_list' %}active{% endif %}">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          All documents
-        </a>
-        <a href="{% url 'assistant:ask' %}" class="nav-link {% if 'ask' in request.path %}active{% endif %}">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          Ask StudyVault
+        <a href="{% url 'library:collections' %}" class="nav-item {% if 'collections' in request.path %}active{% endif %}" title="Collections">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+          </svg>
+          <span class="nav-label">Collections</span>
         </a>
       </nav>
 
-      <div class="sidebar-footer">
-        <div class="sidebar-user">
-          <strong>{{ user.username }}</strong>
-          <span>{{ user.email }}</span>
+      <!-- Saved Conversation History -->
+      <div class="sidebar-history-container" aria-label="Conversation History">
+        <div class="history-header">
+          <span class="history-title">Recent chats</span>
         </div>
-        <div style="display: flex; gap: var(--space-2); margin-top: var(--space-2);">
-          <a href="{% url 'accounts:settings' %}" class="btn btn-secondary btn-sm" style="flex: 1; background: #2A312A; color: #E4E7DF; border-color: var(--color-sidebar-border);">Settings</a>
+
+        <div class="history-scrollable" id="history-scrollable">
+          {% if grouped_conversations %}
+            {% if grouped_conversations.today %}
+              <div class="history-group">
+                <div class="history-group-label">Today</div>
+                {% for conv in grouped_conversations.today %}
+                  <div class="history-item-wrapper {% if active_conversation and active_conversation.id == conv.id %}active{% endif %}" data-conv-id="{{ conv.id }}">
+                    <a href="{% url 'root_conversation_detail' conv.id %}" class="history-item-link" title="{{ conv.title }}">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                      </svg>
+                      <span class="history-item-text">{{ conv.title }}</span>
+                    </a>
+                    <button type="button" class="history-menu-trigger" aria-label="Chat options" onclick="openConvMenu(event, '{{ conv.id }}', '{{ conv.title|escapejs }}')">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if grouped_conversations.yesterday %}
+              <div class="history-group">
+                <div class="history-group-label">Yesterday</div>
+                {% for conv in grouped_conversations.yesterday %}
+                  <div class="history-item-wrapper {% if active_conversation and active_conversation.id == conv.id %}active{% endif %}" data-conv-id="{{ conv.id }}">
+                    <a href="{% url 'root_conversation_detail' conv.id %}" class="history-item-link" title="{{ conv.title }}">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                      </svg>
+                      <span class="history-item-text">{{ conv.title }}</span>
+                    </a>
+                    <button type="button" class="history-menu-trigger" aria-label="Chat options" onclick="openConvMenu(event, '{{ conv.id }}', '{{ conv.title|escapejs }}')">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if grouped_conversations.previous_7_days %}
+              <div class="history-group">
+                <div class="history-group-label">Previous 7 days</div>
+                {% for conv in grouped_conversations.previous_7_days %}
+                  <div class="history-item-wrapper {% if active_conversation and active_conversation.id == conv.id %}active{% endif %}" data-conv-id="{{ conv.id }}">
+                    <a href="{% url 'root_conversation_detail' conv.id %}" class="history-item-link" title="{{ conv.title }}">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                      </svg>
+                      <span class="history-item-text">{{ conv.title }}</span>
+                    </a>
+                    <button type="button" class="history-menu-trigger" aria-label="Chat options" onclick="openConvMenu(event, '{{ conv.id }}', '{{ conv.title|escapejs }}')">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if grouped_conversations.older %}
+              <div class="history-group">
+                <div class="history-group-label">Older</div>
+                {% for conv in grouped_conversations.older %}
+                  <div class="history-item-wrapper {% if active_conversation and active_conversation.id == conv.id %}active{% endif %}" data-conv-id="{{ conv.id }}">
+                    <a href="{% url 'root_conversation_detail' conv.id %}" class="history-item-link" title="{{ conv.title }}">
+                      <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                      </svg>
+                      <span class="history-item-text">{{ conv.title }}</span>
+                    </a>
+                    <button type="button" class="history-menu-trigger" aria-label="Chat options" onclick="openConvMenu(event, '{{ conv.id }}', '{{ conv.title|escapejs }}')">
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+                    </button>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% else %}
+            <div class="history-empty" id="history-empty-placeholder">
+              No recent conversations yet.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Sidebar Bottom Account Section -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user-pill">
+          <div class="user-avatar" title="{{ user.email }}">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          <div class="user-details">
+            <span class="user-name">{{ user.username }}</span>
+            <span class="user-email">{{ user.email }}</span>
+          </div>
+        </div>
+
+        <div class="sidebar-footer-controls">
+          <button type="button" class="footer-icon-btn" id="open-help-btn" title="Help & Study Guide" aria-label="Help">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </button>
+          <a href="{% url 'accounts:settings' %}" class="footer-icon-btn" title="Account Settings" aria-label="Settings">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </a>
           <form method="post" action="{% url 'accounts:logout' %}" style="display: inline;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-secondary btn-sm" style="background: #2A312A; color: #E4E7DF; border-color: var(--color-sidebar-border);" title="Sign out">Exit</button>
+            <button type="submit" class="footer-icon-btn" title="Sign out" aria-label="Sign out">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+            </button>
           </form>
         </div>
       </div>
     </aside>
-
-    <!-- Mobile Navigation Drawer / Bar (Section 17) -->
-    <nav class="mobile-nav" aria-label="Mobile Navigation">
-      <a href="{% url 'overview' %}" class="{% if request.resolver_match.url_name == 'overview' %}active{% endif %}">Overview</a>
-      <a href="{% url 'library:collections' %}" class="{% if 'collections' in request.path %}active{% endif %}">Collections</a>
-      <a href="{% url 'library:document_list' %}" class="{% if request.resolver_match.url_name == 'document_list' %}active{% endif %}">Documents</a>
-      <a href="{% url 'assistant:ask' %}" class="{% if 'ask' in request.path %}active{% endif %}">Ask</a>
-      <a href="{% url 'accounts:settings' %}" class="{% if request.resolver_match.url_name == 'settings' %}active{% endif %}">Settings</a>
-    </nav>
     {% endif %}
 
-    <div class="main-wrapper" {% if not user.is_authenticated %}style="margin-left: 0;"{% endif %}>
+    <!-- Main Workspace Container -->
+    <div class="workspace-wrapper" id="workspace-wrapper">
       {% if user.is_authenticated %}
-      <header class="topbar">
-        <h1 class="page-title">{% block page_title %}StudyVault{% endblock %}</h1>
-        <div class="topbar-actions">
+      <header class="app-topbar" id="app-topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open sidebar">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+          </button>
+          <div class="topbar-context" id="topbar-context">
+            <h2 class="topbar-title" id="topbar-title">{% block page_title %}StudyVault{% endblock %}</h2>
+          </div>
+        </div>
+
+        <div class="topbar-right">
           {% block topbar_actions %}{% endblock %}
         </div>
       </header>
       {% endif %}
 
-      <main class="page-content" {% if not user.is_authenticated %}style="max-width: 100%; padding: 0;"{% endif %}>
+      <main class="workspace-main" id="workspace-main">
         {% if messages %}
-          <div style="margin-bottom: var(--space-4);">
+          <div class="global-alerts">
             {% for message in messages %}
-              <div class="surface" style="padding: var(--space-3) var(--space-4); margin-bottom: var(--space-2); border-color: var(--color-border-strong);">
-                {{ message }}
+              <div class="alert-banner alert-{{ message.tags|default:'info' }}">
+                <span>{{ message }}</span>
               </div>
             {% endfor %}
           </div>
@@ -88,6 +229,358 @@
       </main>
     </div>
   </div>
+
+  <!-- Contextual Menu Dropdown for History Items -->
+  <div id="history-context-menu" class="context-popover" style="display: none;" role="menu">
+    <button type="button" class="popover-item" id="ctx-rename-btn" role="menuitem">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
+      <span>Rename chat</span>
+    </button>
+    <button type="button" class="popover-item text-danger" id="ctx-delete-btn" role="menuitem">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+      <span>Delete chat</span>
+    </button>
+  </div>
+
+  <!-- Search Chats Modal (Ctrl+K) -->
+  <div class="modal-overlay" id="search-modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="search-modal-title">
+    <div class="modal-dialog modal-search">
+      <div class="modal-header">
+        <div class="search-input-wrapper">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" id="chat-search-input" placeholder="Search conversations and notes..." autocomplete="off">
+        </div>
+        <button type="button" class="modal-close-btn" id="close-search-btn" aria-label="Close search">&times;</button>
+      </div>
+      <div class="modal-body search-results-body" id="search-results-list">
+        <div class="search-hint">Type to search saved conversations by topic or question...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rename Conversation Modal -->
+  <div class="modal-overlay" id="rename-modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Rename conversation</h3>
+        <button type="button" class="modal-close-btn" id="close-rename-btn">&times;</button>
+      </div>
+      <form id="rename-form">
+        <div class="modal-body">
+          <label for="rename-input" class="form-label">Conversation title</label>
+          <input type="text" id="rename-input" class="input" required maxlength="150">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" id="cancel-rename-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete Conversation Confirmation Modal -->
+  <div class="modal-overlay" id="delete-conv-modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title text-danger">Delete conversation?</h3>
+        <button type="button" class="modal-close-btn" id="close-delete-conv-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5;">
+          Are you sure you want to delete <strong id="delete-conv-title"></strong>? This will permanently remove this conversation and its question history.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" id="cancel-delete-conv-btn">Cancel</button>
+        <button type="button" class="btn btn-danger btn-sm" id="confirm-delete-conv-btn">Delete conversation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Help & Guide Modal -->
+  <div class="modal-overlay" id="help-modal" style="display: none;" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 class="modal-title">StudyVault Assistant Guide</h3>
+        <button type="button" class="modal-close-btn" id="close-help-btn">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.6; display: flex; flex-direction: column; gap: var(--space-3);">
+        <div>
+          <strong style="color: var(--color-text);">1. Grounded In Your Documents</strong>
+          <p>StudyVault uses Retrieval-Augmented Generation (RAG). Every answer is synthesized exclusively from your uploaded study materials, with page citations and exact text excerpts.</p>
+        </div>
+        <div>
+          <strong style="color: var(--color-text);">2. Strict Factual Honesty</strong>
+          <p>If your uploaded notes don't contain sufficient context to answer a question, the assistant honestly abstains rather than hallucinating facts.</p>
+        </div>
+        <div>
+          <strong style="color: var(--color-text);">3. Scope Your Inquiries</strong>
+          <p>Target your entire library, a specific subject collection, or individual documents using the scope selector at the bottom or top of the chat.</p>
+        </div>
+        <div>
+          <strong style="color: var(--color-text);">4. Keyboard Shortcuts</strong>
+          <p><kbd class="shortcut-pill">Enter</kbd> Send question &bull; <kbd class="shortcut-pill">Shift+Enter</kbd> New line &bull; <kbd class="shortcut-pill">Ctrl+K</kbd> Search saved chats</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('help-modal').style.display='none'">Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- Global Application Shell JavaScript -->
+  <script>
+    function getCsrfToken() {
+      const cookie = document.cookie.split("; ").find(r => r.startsWith("csrftoken="));
+      return cookie ? cookie.split("=")[1] : "";
+    }
+
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+      const toast = document.createElement("div");
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add("toast-fadeout");
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    // Sidebar Collapse / Expand Persistence
+    const appLayout = document.getElementById("app-layout");
+    const sidebarToggleBtn = document.getElementById("sidebar-toggle-btn");
+    const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+    const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+
+    if (sidebarToggleBtn && appLayout) {
+      const isCollapsed = localStorage.getItem("studyvault_sidebar_collapsed") === "true";
+      if (isCollapsed) appLayout.classList.add("sidebar-collapsed");
+
+      sidebarToggleBtn.addEventListener("click", () => {
+        appLayout.classList.toggle("sidebar-collapsed");
+        const collapsed = appLayout.classList.contains("sidebar-collapsed");
+        localStorage.setItem("studyvault_sidebar_collapsed", collapsed);
+      });
+    }
+
+    if (mobileMenuBtn && appLayout && sidebarBackdrop) {
+      mobileMenuBtn.addEventListener("click", () => {
+        appLayout.classList.toggle("sidebar-mobile-open");
+      });
+      sidebarBackdrop.addEventListener("click", () => {
+        appLayout.classList.remove("sidebar-mobile-open");
+      });
+    }
+
+    // Help Modal
+    const openHelpBtn = document.getElementById("open-help-btn");
+    const helpModal = document.getElementById("help-modal");
+    const closeHelpBtn = document.getElementById("close-help-btn");
+    if (openHelpBtn && helpModal) {
+      openHelpBtn.addEventListener("click", () => helpModal.style.display = "flex");
+      closeHelpBtn.addEventListener("click", () => helpModal.style.display = "none");
+    }
+
+    // Search Modal (Ctrl+K)
+    const searchModal = document.getElementById("search-modal");
+    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
+    const closeSearchBtn = document.getElementById("close-search-btn");
+    const chatSearchInput = document.getElementById("chat-search-input");
+    const searchResultsList = document.getElementById("search-results-list");
+
+    function openSearchModal() {
+      if (!searchModal) return;
+      searchModal.style.display = "flex";
+      chatSearchInput.focus();
+      chatSearchInput.value = "";
+      performSearch("");
+    }
+
+    function closeSearchModal() {
+      if (!searchModal) return;
+      searchModal.style.display = "none";
+    }
+
+    if (sidebarSearchBtn) sidebarSearchBtn.addEventListener("click", openSearchModal);
+    if (closeSearchBtn) closeSearchBtn.addEventListener("click", closeSearchModal);
+
+    window.addEventListener("keydown", (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openSearchModal();
+      }
+      if (e.key === "Escape") {
+        closeSearchModal();
+        if (helpModal) helpModal.style.display = "none";
+        closeConvMenu();
+        const renameModal = document.getElementById("rename-modal");
+        if (renameModal) renameModal.style.display = "none";
+        const deleteModal = document.getElementById("delete-conv-modal");
+        if (deleteModal) deleteModal.style.display = "none";
+      }
+    });
+
+    let searchDebounceTimer = null;
+    if (chatSearchInput) {
+      chatSearchInput.addEventListener("input", () => {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(() => {
+          performSearch(chatSearchInput.value.trim());
+        }, 200);
+      });
+    }
+
+    async function performSearch(query) {
+      if (!searchResultsList) return;
+      try {
+        const res = await fetch(`/api/v1/conversations/?search=${encodeURIComponent(query)}`);
+        if (!res.ok) return;
+        const convs = await res.json();
+        if (!convs.length) {
+          searchResultsList.innerHTML = `<div class="search-hint">No conversations found matching "${escapeHtml(query)}".</div>`;
+          return;
+        }
+        searchResultsList.innerHTML = convs.map(c => `
+          <a href="/c/${c.id}/" class="search-result-item">
+            <div class="result-title">${escapeHtml(c.title)}</div>
+            <div class="result-meta">
+              ${c.collection_name ? `<span>${escapeHtml(c.collection_name)}</span> &bull; ` : ""}
+              <span>${c.question_count || 0} question${c.question_count === 1 ? '' : 's'}</span> &bull;
+              <span>${new Date(c.updated_at).toLocaleDateString()}</span>
+            </div>
+          </a>
+        `).join("");
+      } catch (err) {
+        searchResultsList.innerHTML = `<div class="search-hint text-danger">Error loading search results.</div>`;
+      }
+    }
+
+    // Context Menu for Conversation Items
+    let targetConvId = null;
+    let targetConvTitle = "";
+    const ctxMenu = document.getElementById("history-context-menu");
+    const ctxRenameBtn = document.getElementById("ctx-rename-btn");
+    const ctxDeleteBtn = document.getElementById("ctx-delete-btn");
+
+    function openConvMenu(event, id, title) {
+      event.preventDefault();
+      event.stopPropagation();
+      targetConvId = id;
+      targetConvTitle = title;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      ctxMenu.style.top = `${rect.bottom + 4}px`;
+      ctxMenu.style.left = `${Math.min(rect.left, window.innerWidth - 170)}px`;
+      ctxMenu.style.display = "block";
+    }
+
+    function closeConvMenu() {
+      if (ctxMenu) ctxMenu.style.display = "none";
+    }
+
+    document.addEventListener("click", closeConvMenu);
+
+    // Rename flow
+    const renameModal = document.getElementById("rename-modal");
+    const renameForm = document.getElementById("rename-form");
+    const renameInput = document.getElementById("rename-input");
+    const closeRenameBtn = document.getElementById("close-rename-btn");
+    const cancelRenameBtn = document.getElementById("cancel-rename-btn");
+
+    if (ctxRenameBtn && renameModal) {
+      ctxRenameBtn.addEventListener("click", () => {
+        closeConvMenu();
+        renameInput.value = targetConvTitle;
+        renameModal.style.display = "flex";
+        renameInput.focus();
+      });
+      if (closeRenameBtn) closeRenameBtn.addEventListener("click", () => renameModal.style.display = "none");
+      if (cancelRenameBtn) cancelRenameBtn.addEventListener("click", () => renameModal.style.display = "none");
+
+      renameForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const newTitle = renameInput.value.trim();
+        if (!newTitle || !targetConvId) return;
+
+        try {
+          const res = await fetch(`/api/v1/conversations/${targetConvId}/`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": getCsrfToken(),
+            },
+            body: JSON.stringify({ title: newTitle }),
+          });
+          if (res.ok) {
+            renameModal.style.display = "none";
+            showToast("Conversation renamed", "success");
+            // Update UI elements matching this ID
+            document.querySelectorAll(`[data-conv-id="${targetConvId}"] .history-item-text`).forEach(el => {
+              el.textContent = newTitle;
+            });
+            const topbarTitle = document.getElementById("topbar-title");
+            if (topbarTitle && window.location.pathname.includes(targetConvId)) {
+              topbarTitle.textContent = newTitle;
+            }
+          } else {
+            showToast("Failed to rename conversation", "error");
+          }
+        } catch (_) {
+          showToast("Network error", "error");
+        }
+      });
+    }
+
+    // Delete flow
+    const deleteModal = document.getElementById("delete-conv-modal");
+    const deleteTitleSpan = document.getElementById("delete-conv-title");
+    const closeDeleteBtn = document.getElementById("close-delete-conv-btn");
+    const cancelDeleteBtn = document.getElementById("cancel-delete-conv-btn");
+    const confirmDeleteBtn = document.getElementById("confirm-delete-conv-btn");
+
+    if (ctxDeleteBtn && deleteModal) {
+      ctxDeleteBtn.addEventListener("click", () => {
+        closeConvMenu();
+        if (deleteTitleSpan) deleteTitleSpan.textContent = `"${targetConvTitle}"`;
+        deleteModal.style.display = "flex";
+      });
+      if (closeDeleteBtn) closeDeleteBtn.addEventListener("click", () => deleteModal.style.display = "none");
+      if (cancelDeleteBtn) cancelDeleteBtn.addEventListener("click", () => deleteModal.style.display = "none");
+
+      confirmDeleteBtn.addEventListener("click", async () => {
+        if (!targetConvId) return;
+        try {
+          const res = await fetch(`/api/v1/conversations/${targetConvId}/`, {
+            method: "DELETE",
+            headers: { "X-CSRFToken": getCsrfToken() },
+          });
+          if (res.ok) {
+            deleteModal.style.display = "none";
+            showToast("Conversation deleted", "success");
+            document.querySelectorAll(`[data-conv-id="${targetConvId}"]`).forEach(el => el.remove());
+            // If deleting the active conversation, navigate back to home/new chat
+            if (window.location.pathname.includes(targetConvId)) {
+              window.location.href = "/";
+            }
+          } else {
+            showToast("Failed to delete conversation", "error");
+          }
+        } catch (_) {
+          showToast("Network error", "error");
+        }
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+    }
+  </script>
 
   {% block extra_js %}{% endblock %}
 </body>

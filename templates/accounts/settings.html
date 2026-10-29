@@ -3,8 +3,15 @@
 {% block title %}Settings — StudyVault{% endblock %}
 {% block page_title %}Settings & Account{% endblock %}
 
+{% block topbar_actions %}
+  <a href="{% url 'home' %}" class="btn btn-secondary btn-sm" title="Back to conversation">
+    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <span>Back to Chat</span>
+  </a>
+{% endblock %}
+
 {% block content %}
-<div style="max-width: 760px; display: flex; flex-direction: column; gap: var(--space-6);">
+<div style="max-width: 760px; margin: 0 auto; width: 100%; padding: var(--space-6) var(--space-8); display: flex; flex-direction: column; gap: var(--space-6); overflow-y: auto;">
 
   <!-- 1. Profile Basics (Section 16) -->
   <div class="surface">
@@ -32,7 +39,7 @@
       Visual Theme
     </h2>
     <p style="font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-3);">
-      The Digital Study Desk theme is configured with a warm canvas (<code>#F7F7F4</code>), restrained dark ink sidebar (<code>#202520</code>), and academic sage accents.
+      The Digital Study Desk theme is configured with a warm canvas (<code>#F8F9FA</code>), restrained dark ink sidebar (<code>#1E221E</code>), and academic sage accents.
     </p>
     <div style="display: inline-flex; align-items: center; gap: var(--space-2); padding: 4px var(--space-3); background-color: var(--color-surface-subtle); border-radius: var(--radius-sm); font-size: var(--text-xs); font-family: var(--font-mono); color: var(--color-text-secondary);">
       <span>Active Theme: Digital Study Desk (Light)</span>

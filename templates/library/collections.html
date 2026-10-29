@@ -4,13 +4,17 @@
 {% block page_title %}Study Collections{% endblock %}
 
 {% block topbar_actions %}
+  <a href="{% url 'home' %}" class="btn btn-secondary btn-sm" title="Back to conversation">
+    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+    <span>Back to Chat</span>
+  </a>
   <button id="new-collection-btn" class="btn btn-primary btn-sm">+ New collection</button>
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; flex-direction: column; gap: var(--space-6);">
+<div style="display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-6) var(--space-8); max-width: 1200px; margin: 0 auto; width: 100%; overflow-y: auto;">
 
-  <div style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: -1rem;">
+  <div style="color: var(--color-text-secondary); font-size: var(--text-sm); margin-top: -0.5rem;">
     Group related lecture notes, textbooks, and reading materials to target retrieval.
   </div>
 
@@ -55,7 +59,10 @@
 
         <div style="border-top: 1px solid var(--color-border); padding-top: var(--space-3); display: flex; justify-content: space-between; align-items: center; font-size: var(--text-xs); color: var(--color-text-muted); font-family: var(--font-mono);">
           <span>{{ col.documents.count }} document{{ col.documents.count|pluralize }}</span>
-          <a href="{% url 'library:collection_detail' col.id %}" class="btn btn-secondary btn-sm">Open &rarr;</a>
+          <div style="display: flex; gap: var(--space-2);">
+            <a href="/?collection={{ col.id }}" class="btn btn-primary btn-sm" title="Study this collection">Study</a>
+            <a href="{% url 'library:collection_detail' col.id %}" class="btn btn-secondary btn-sm">Manage</a>
+          </div>
         </div>
       </div>
     {% empty %}
@@ -84,11 +91,6 @@
     panel.scrollIntoView({ behavior: "smooth" });
   });
   cancelBtn.addEventListener("click", () => panel.style.display = "none");
-
-  function getCsrfToken() {
-    const cookie = document.cookie.split("; ").find(row => row.startsWith("csrftoken="));
-    return cookie ? cookie.split("=")[1] : "";
-  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();

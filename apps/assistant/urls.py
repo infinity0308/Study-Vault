@@ -4,5 +4,6 @@ from . import views
 app_name = "assistant"
 
 urlpatterns = [
-    path("", views.ask_view, name="ask"),
+    path("", views.chat_view, name="ask"),
+    path("c/<uuid:conversation_id>/", views.chat_view, name="conversation_detail"),
 ]
