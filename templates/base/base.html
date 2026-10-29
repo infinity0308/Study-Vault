@@ -15,13 +15,13 @@
     <!-- Mobile Backdrop Overlay -->
     <div class="sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
 
-    <!-- Collapsible Modern Sidebar -->
+    <!-- Collapsible Modern Sidebar (Image 1 & 3 MediVault Style) -->
     <aside class="app-sidebar" id="app-sidebar" aria-label="Main Application Sidebar">
       <!-- Sidebar Header -->
       <div class="sidebar-header">
         <a href="{% url 'home' %}" class="sidebar-brand" title="StudyVault Home">
           <div class="brand-symbol">SV</div>
-          <span class="brand-name">StudyVault</span>
+          <span class="brand-name">Study<span style="color: red;">Vault</span></span>
         </a>
         <button type="button" class="sidebar-toggle-btn" id="sidebar-toggle-btn" aria-label="Collapse sidebar" title="Toggle sidebar">
           <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,43 +30,85 @@
         </button>
       </div>
 
-      <!-- Primary Actions -->
-      <div class="sidebar-actions">
-        <a href="{% url 'home' %}" class="sidebar-action-btn primary-new-chat" id="sidebar-new-chat-btn" title="New chat (Ctrl+Shift+O)">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          <span class="action-label">New chat</span>
-        </a>
-
-        <button type="button" class="sidebar-action-btn" id="sidebar-search-btn" title="Search chats (Ctrl+K)">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <span class="action-label">Search chats</span>
-          <kbd class="shortcut-pill">⌘K</kbd>
-        </button>
+      <!-- Category Label with 100% Safe/Grounded Pill (Image 1 style) -->
+      <div class="sidebar-section-row">
+        <span class="sidebar-section-title">STUDY SERVICES</span>
+        <span class="sidebar-section-tag">100% Safe</span>
       </div>
 
-      <!-- Main Navigation Links -->
-      <nav class="sidebar-nav" aria-label="Study Workspace Links">
-        <div class="nav-section-title">Library</div>
-        <a href="{% url 'library:document_list' %}" class="nav-item {% if request.resolver_match.url_name == 'document_list' %}active{% endif %}" title="All Documents">
-          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      <!-- Highlighted Active Hub Item (Image 1 Dashboard & Hub style) -->
+      <div class="sidebar-nav-highlight-wrap">
+        <a href="{% url 'home' %}" class="sidebar-nav-highlight {% if request.resolver_match.url_name == 'home' or request.resolver_match.url_name == 'root_conversation_detail' or request.resolver_match.url_name == 'overview' %}active{% endif %}" title="Dashboard & Study Hub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+            <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+            <rect x="3" y="14" width="7" height="7" rx="1.5"/>
           </svg>
-          <span class="nav-label">Documents</span>
+          <span class="nav-label">Dashboard &amp; Hub</span>
         </a>
-        <a href="{% url 'library:collections' %}" class="nav-item {% if 'collections' in request.path %}active{% endif %}" title="Collections">
+      </div>
+
+      <!-- Main Navigation Links (Preserving all current content) -->
+      <nav class="sidebar-nav" aria-label="Study Workspace Links">
+        <a href="{% url 'library:document_list' %}" class="nav-item {% if request.resolver_match.url_name == 'document_list' %}active{% endif %}" title="Lab Reports & Study Vault">
           <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+          </svg>
+          <span class="nav-label">Notes &amp; Vault</span>
+          <span class="sidebar-mini-tag">PDF</span>
+        </a>
+
+        <a href="{% url 'library:collections' %}" class="nav-item {% if 'collections' in request.path %}active{% endif %}" title="Subject Collections">
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
           </svg>
           <span class="nav-label">Collections</span>
         </a>
       </nav>
 
-      <!-- Saved Conversation History -->
+      
+
+      <!-- Feature Card (Free Sample Pickup style from Image 1) -->
+      <!-- <div class="sidebar-promo-card">
+        <div class="promo-card-title">
+          <div class="promo-icon-box">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          <span>Grounded AI Study</span>
+        </div>
+        <p class="promo-card-desc">
+          Safe, cited answers synthesized directly from your study notes and textbooks.
+        </p>
+        <div class="promo-card-footer">
+          <span class="promo-tag-text">Reports in 24 Hrs</span>
+          <a href="{% url 'home' %}" class="promo-link-action">Study &rsaquo;</a>
+        </div>
+      </div> -->
+
+      <!-- Saved Conversation History (Preserving all history groups and menu options) -->
       <div class="sidebar-history-container" aria-label="Conversation History">
+
+        <!-- Primary Actions (Preserved) -->
+        <div class="sidebar-actions" style ="margin-top: 10px;">
+          <a href="{% url 'home' %}" class="sidebar-action-btn primary-new-chat" id="sidebar-new-chat-btn" title="New chat (Ctrl+Shift+O)">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            <span class="action-label">New chat</span>
+          </a>
+
+          <button type="button" class="sidebar-action-btn" id="sidebar-search-btn" title="Search chats (Ctrl+K)">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <span class="action-label">Search chats</span>
+            <kbd class="shortcut-pill">⌘K</kbd>
+          </button>
+        </div>
+
         <div class="history-header">
           <span class="history-title">Recent chats</span>
         </div>
@@ -156,7 +198,30 @@
         </div>
       </div>
 
-      <!-- Sidebar Bottom Account Section -->
+      <!-- Bottom Settings & Certification Badges (Image 1 style) -->
+      <div class="sidebar-bottom-container">
+        <!-- Health ID & Settings style Link -->
+        <a href="{% url 'accounts:settings' %}" class="sidebar-settings-link" title="Study ID & Account Settings">
+          <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+          </svg>
+          <span class="settings-link-label">Vault ID &amp; Settings</span>
+        </a>
+
+        <!-- NABL & CAP CERTIFIED style Trust Card (Image 1 bottom card) -->
+        <div class="sidebar-certified-card">
+          <div class="certified-header">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <span class="certified-title">RAG &amp; VAULT CERTIFIED</span>
+          </div>
+          <div class="certified-desc">100% Grounded Citations &amp; Vault</div>
+        </div>
+      </div>
+
+      <!-- Sidebar Bottom Account Section (Preserved) -->
       <div class="sidebar-footer">
         <div class="sidebar-user-pill">
           <div class="user-avatar" title="{{ user.email }}">
@@ -196,6 +261,7 @@
     <!-- Main Workspace Container -->
     <div class="workspace-wrapper" id="workspace-wrapper">
       {% if user.is_authenticated %}
+      <!-- Modern Header (Image 2 MediVault Style, no searchbar & location) -->
       <header class="app-topbar" id="app-topbar">
         <div class="topbar-left">
           <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Open sidebar">
@@ -203,13 +269,107 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
             </svg>
           </button>
-          <div class="topbar-context" id="topbar-context">
-            <h2 class="topbar-title" id="topbar-title">{% block page_title %}StudyVault{% endblock %}</h2>
-          </div>
+
+          <!-- MediVault Brand Block (Image 2 style) -->
+          <a href="{% url 'home' %}" class="header-brand-block" title="StudyVault Home">
+            <div class="header-brand-logo">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+            <div class="header-brand-text">
+              <div class="header-brand-row">
+                <span class="header-brand-name">StudyVault</span>
+                <span class="header-brand-badge">VAULT</span>
+              </div>
+              <span class="header-brand-sub">Smart Notes &amp; Academic Vault</span>
+            </div>
+          </a>
+
+          <!-- Context Title for Page Tracking & JS Title Updates -->
+          <h2 class="topbar-title" id="topbar-title" style="display: none;">{% block page_title %}StudyVault{% endblock %}</h2>
         </div>
 
+        <!-- Center: No searchbar and no location per user instruction -->
+        <div class="topbar-center" aria-hidden="true"></div>
+
         <div class="topbar-right">
+          <!-- Page context actions slot (sources toggle etc.) -->
           {% block topbar_actions %}{% endblock %}
+
+          <!-- Outline Action Button (Book Test style in Image 2) -->
+          <a href="{% url 'home' %}" class="header-btn-outline" title="Start a fresh study chat">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" stroke-width="2"/>
+              <path stroke-width="2" stroke-linecap="round" d="M12 7v5l3 2"/>
+            </svg>
+            <span>New Chat</span>
+          </a>
+
+          <!-- Solid Coral Action Button (Upload Report style in Image 2) -->
+          <button type="button" class="header-btn-solid" id="header-upload-btn" onclick="triggerGlobalUpload()" title="Upload &amp; index study notes">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span>Upload Notes</span>
+          </button>
+
+          <!-- Notification Bell with Red Dot (Image 2 style) -->
+          <button type="button" class="header-bell-btn" id="header-notif-btn" title="Notifications" aria-label="Notifications" onclick="showToast('You are up to date! All notes indexed.', 'info')">
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="bell-badge-dot"></span>
+          </button>
+
+          <!-- Header Divider -->
+          <!-- <div class="header-divider" aria-hidden="true"></div> -->
+
+          <!-- User Profile Dropdown Pill (Sarah Jenkins style in Image 2) -->
+          <!-- <div class="header-user-wrapper" id="header-user-wrapper">
+            <button type="button" class="header-user-btn" id="header-user-menu-btn" aria-haspopup="true" aria-expanded="false" title="Account profile">
+              <div class="header-user-avatar">
+                {{ user.username|slice:":1"|upper }}
+              </div>
+              <div class="header-user-meta">
+                <span class="header-user-name">{{ user.first_name|default:user.username }}</span>
+                <span class="header-user-sub">ID: SV-{% if user.id %}{{ user.id|stringformat:"04d" }}{% else %}8821{% endif %}</span>
+              </div>
+              <svg class="header-user-chevron" width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button> -->
+
+            <!-- User Dropdown Menu -->
+            <!-- <div class="header-user-dropdown" id="header-user-dropdown" style="display: none;">
+              <div class="user-dropdown-header">
+                <strong>{{ user.username }}</strong>
+                <span style="font-size: 11px; color: var(--color-text-muted);">{{ user.email }}</span>
+              </div>
+              <div class="user-dropdown-divider"></div>
+              <a href="{% url 'library:document_list' %}" class="user-dropdown-item">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>My Library</span>
+              </a>
+              <a href="{% url 'library:collections' %}" class="user-dropdown-item">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                <span>Collections</span>
+              </a>
+              <a href="{% url 'accounts:settings' %}" class="user-dropdown-item">
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Settings</span>
+              </a>
+              <div class="user-dropdown-divider"></div>
+              <form method="post" action="{% url 'accounts:logout' %}" style="display: block; margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="user-dropdown-item text-danger" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer;">
+                  <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                  <span>Sign out</span>
+                </button>
+              </form>
+            </div> -->
+          <!-- </div> -->
         </div>
       </header>
       {% endif %}
@@ -576,11 +736,85 @@
       });
     }
 
+    // User Profile Dropdown Menu in Header
+    const userMenuBtn = document.getElementById("header-user-menu-btn");
+    const userDropdown = document.getElementById("header-user-dropdown");
+    if (userMenuBtn && userDropdown) {
+      userMenuBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const isVisible = userDropdown.style.display === "block";
+        userDropdown.style.display = isVisible ? "none" : "block";
+        userMenuBtn.setAttribute("aria-expanded", !isVisible);
+      });
+      document.addEventListener("click", () => {
+        userDropdown.style.display = "none";
+        userMenuBtn.setAttribute("aria-expanded", "false");
+      });
+    }
+
+    // Global Upload Notes Trigger from Header
+    function triggerGlobalUpload() {
+      const directInput = document.getElementById("direct-pdf-input");
+      if (directInput) {
+        directInput.click();
+        return;
+      }
+      const openUploadBtn = document.getElementById("open-upload-btn");
+      if (openUploadBtn) {
+        openUploadBtn.click();
+        return;
+      }
+      const globalInput = document.getElementById("global-pdf-input");
+      if (globalInput) {
+        globalInput.click();
+        return;
+      }
+      window.location.href = "{% url 'library:document_list' %}";
+    }
+
+    async function handleGlobalPdfUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      showToast(`Uploading ${file.name}...`, "info");
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("title", file.name.replace(/\.[^/.]+$/, ""));
+
+      try {
+        const res = await fetch("/api/v1/documents/", {
+          method: "POST",
+          headers: { "X-CSRFToken": getCsrfToken() },
+          body: formData,
+        });
+
+        if (!res.ok) {
+          showToast("PDF upload failed", "error");
+          return;
+        }
+
+        const data = await res.json();
+        showToast(`Document uploaded: ${data.title}`, "success");
+        setTimeout(() => {
+          if (window.location.pathname.includes("/library/")) {
+            window.location.reload();
+          } else {
+            window.location.href = "/";
+          }
+        }, 1200);
+      } catch (err) {
+        showToast("Error uploading file", "error");
+      }
+    }
+
     function escapeHtml(str) {
       if (!str) return "";
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
     }
   </script>
+
+  <!-- Global PDF file input for header action -->
+  <input type="file" id="global-pdf-input" accept="application/pdf" style="display: none;" onchange="handleGlobalPdfUpload(event)">
 
   {% block extra_js %}{% endblock %}
 </body>

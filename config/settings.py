@@ -88,6 +88,10 @@ ASGI_APPLICATION = "config.asgi.application"
 DATABASES = {
     "default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
 }
+if DATABASES["default"]["ENGINE"] == "django.db.backends.sqlite3":
+    _db_p = Path(DATABASES["default"]["NAME"])
+    if not _db_p.is_absolute():
+        DATABASES["default"]["NAME"] = str(BASE_DIR / _db_p)
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
@@ -150,6 +154,8 @@ CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
+CELERY_TASK_ALWAYS_EAGER = env.bool("CELERY_TASK_ALWAYS_EAGER", default=True)
+CELERY_TASK_EAGER_PROPAGATES = True
 
 # Cloudflare R2 Storage (S3-compatible)
 R2_ACCOUNT_ID = env("R2_ACCOUNT_ID", default="")

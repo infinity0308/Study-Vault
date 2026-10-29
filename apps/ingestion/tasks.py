@@ -100,14 +100,12 @@ def process_document_task(self, document_id: str):
 
     except Exception as e:
         logger.exception("Unexpected error processing document %s: %s", document_id, e)
-        # Bounded retries if retryable
-        if self.request.retries < self.max_retries:
-            raise self.retry(exc=e)
-
         doc.status = Document.Status.FAILED
         doc.failure_code = "PROCESSING_ERROR"
-        doc.failure_message = "Document processing failed. Please retry."
+        doc.failure_message = str(e)[:250] or "Document processing failed. Please retry."
         doc.save(update_fields=["status", "failure_code", "failure_message", "updated_at"])
+        if hasattr(self, "request") and getattr(self.request, "retries", 0) < self.max_retries and not getattr(settings, "CELERY_TASK_ALWAYS_EAGER", False):
+            raise self.retry(exc=e)
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=30)
